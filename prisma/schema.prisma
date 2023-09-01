@@ -1,0 +1,161 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// generator erd {
+//   provider = "prisma-erd-generator"
+// }
+
+model Video {
+  id              String           @id @unique @default(uuid())
+  title           String           @unique
+  description     String
+  display         Boolean          @default(true)
+  thumbnailUrl    String
+  videoUrl        String           @unique
+  teaserUrl       String
+  isPublic        Boolean          @default(false)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  nbViews         Int              @default(0)
+  duration        Float
+  category        Category         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId      String
+  favorites       Favorite[]
+  tags            Tag[]
+  sectionsStatics Section_Static[]
+}
+
+model Category {
+  id              String            @id @unique @default(uuid())
+  name            String            @unique
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  videos          Video[]
+  sectionsDynamic Section_Dynamic[]
+}
+
+model User {
+  id               String   @id @unique @default(uuid())
+  firstname        String
+  lastname         String
+  username         String   @unique
+  email            String   @unique
+  password         String
+  imageUrl         String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  role             Role     @default(USER)
+  favorites        Favorite[]
+}
+
+model Favorite {
+  id               String          @id @unique @default(uuid())
+  createdAt        DateTime        @default(now())
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String
+  video            Video           @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  videoId          String
+}
+
+
+model Tag {
+  id        String   @id @unique @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  videos    Video[]
+}
+
+model Section_Dynamic {
+  id                   String                    @id @unique @default(uuid())
+  title                String
+  description          String
+  max                  Int                       @default(10)
+  isGrid               Boolean                   @default(false)
+  createdAt            DateTime                  @default(now())
+  updatedAt            DateTime                  @updatedAt
+  categories           Category                  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId           String
+  pagesSectionsDynamic Pages_Sections_Dynamics[]
+}
+
+model Section_Static {
+  id                  String                   @id @unique @default(uuid())
+  title               String
+  description         String
+  isHero              Boolean                  @default(false)
+  createdAt           DateTime                 @default(now())
+  updatedAt           DateTime                 @updatedAt
+  videos              Video[]
+  pagesSectionsStatic Pages_Sections_Statics[]
+}
+
+model Page {
+  id                   String                    @id @unique @default(uuid())
+  title                String
+  display              Boolean                   @default(false)
+  createdAt            DateTime                  @default(now())
+  updatedAt            DateTime                  @updatedAt
+  pagesSectionsStatic  Pages_Sections_Statics[]
+  pagesSectionsDynamic Pages_Sections_Dynamics[]
+  pagesAdvertisings    Pages_Advertisings[]
+}
+
+model Pages_Sections_Statics {
+  id               String         @id @unique @default(uuid())
+  position         Int            @default(0)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  sectionsStatics  Section_Static @relation(fields: [sectionsStaticId], references: [id], onDelete: Cascade)
+  sectionsStaticId String
+  pages            Page           @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  pageId           String
+}
+
+model Pages_Sections_Dynamics {
+  id                String          @id @unique @default(uuid())
+  position          Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  pages             Page            @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  pageId            String
+  sectionsDynamic   Section_Dynamic @relation(fields: [sectionsDynamicId], references: [id], onDelete: Cascade)
+  sectionsDynamicId String
+}
+
+model Advertising {
+  id                String               @id @unique @default(uuid())
+  title             String
+  description       String
+  imageUrl          String
+  linkTo            String
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  pagesAdvertisings Pages_Advertisings[]
+}
+
+model Pages_Advertisings {
+  id            String      @id @unique @default(uuid())
+  position      Int         @default(0)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  pages         Page        @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  pageId        String
+  advertisings  Advertising @relation(fields: [advertisingId], references: [id], onDelete: Cascade)
+  advertisingId String
+}
+
+enum Role {
+  ADMIN
+  USER
+  SUPER_ADMIN
+}
