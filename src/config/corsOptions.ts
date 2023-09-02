@@ -1,9 +1,9 @@
-/* eslint-disable no-console */
+// Remplacez '*' par votre origine explicitement
 import dotenv from "dotenv";
 
 dotenv.config();
 
-// const whiteListedUrls = process.env.CORS_WHITELISTED_URLS?.split(",") || [];
+const whiteListedUrls = process.env.CORS_WHITELISTED_URLS?.split(",") || [];
 
 export const corsOptions = {
   origin: (
@@ -11,20 +11,16 @@ export const corsOptions = {
     callback: (err: Error | null, allow?: boolean) => Error | void
   ): void | Error => {
     console.log("origin", origin);
-    return callback(null, true);
-    // if (process.env.NODE_ENV === "development") {
-    //   return callback(null, true);
-    // }
 
-    // if (typeof origin === "undefined") {
-    //   return callback(new Error("Not allowed by CORS"), false);
-    // }
+    if (process.env.NODE_ENV === "development") {
+      return callback(null, true);
+    }
 
-    // if (whiteListedUrls.includes(origin)) {
-    //   return callback(null, true);
-    // }
+    if (typeof origin === "undefined" || whiteListedUrls.includes(origin)) {
+      return callback(null, true);
+    }
 
-    // return callback(new Error("Not allowed by CORS"), false);
+    return callback(new Error("Not allowed by CORS"), false);
   },
   credentials: true,
   exposedHeaders: ["Authorization"],

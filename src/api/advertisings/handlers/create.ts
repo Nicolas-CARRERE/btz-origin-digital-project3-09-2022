@@ -28,7 +28,6 @@ const createAdd: AdvertisingHandlers["create"] = async (req, res) => {
         if (err) {
           throw new Error(`${err}`);
         }
-        console.log(etag);
       }
     );
 

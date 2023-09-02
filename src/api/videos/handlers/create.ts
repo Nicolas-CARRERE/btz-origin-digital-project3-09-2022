@@ -52,27 +52,37 @@ const createVideo: VideoHandlers["create"] = async (req, res) => {
         if (fileData.filename.substring(0, 2) === "tn") {
           await uploadToS3(
             passThrough,
-            `/thumbnails/${slugify(formaDataFields.title)}-thumbnail`,
+            `/thumbnails/${slugify(formaDataFields.title)}-thumbnail.${
+              fileData.mimeType.split("/")[1]
+            }`,
             metadata
           );
           thumbnailUrl = `https://${
             process.env.MINIO_ENDPOINT
-          }/origin/thumbnails/${slugify(formaDataFields.title)}-thumbnail`;
+          }/origin/thumbnails/${slugify(formaDataFields.title)}-thumbnail.${
+            fileData.mimeType.split("/")[1]
+          }`;
         }
         if (fileData.filename.substring(0, 2) === "te") {
           await uploadToS3(
             passThrough,
-            `/teasers/${slugify(formaDataFields.title)}-teaser`,
+            `/teasers/${slugify(formaDataFields.title)}-teaser.${
+              fileData.mimeType.split("/")[1]
+            }`,
             metadata
           );
           teaserUrl = `https://${
             process.env.MINIO_ENDPOINT
-          }/origin/teasers/${slugify(formaDataFields.title)}-teaser`;
+          }/origin/teasers/${slugify(formaDataFields.title)}-teaser.${
+            fileData.mimeType.split("/")[1]
+          }`;
         }
         if (fileData.filename.substring(0, 2) === "vi") {
           await uploadToS3(
             passThrough,
-            `/videos/${slugify(formaDataFields.title)}`,
+            `/videos/${slugify(formaDataFields.title)}.${
+              fileData.mimeType.split("/")[1]
+            }`,
             metadata
           );
           console.log(formaDataFields);
@@ -84,7 +94,9 @@ const createVideo: VideoHandlers["create"] = async (req, res) => {
               duration: durationParser(formaDataFields.duration),
               videoUrl: `https://${
                 process.env.MINIO_ENDPOINT
-              }/origin/videos/${slugify(formaDataFields.title)}`,
+              }/origin/videos/${slugify(formaDataFields.title)}.${
+                fileData.mimeType.split("/")[1]
+              }`,
               thumbnailUrl: thumbnailUrl,
               teaserUrl: teaserUrl,
             },
