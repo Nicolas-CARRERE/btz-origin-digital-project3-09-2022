@@ -24,7 +24,7 @@ const createAdd: AdvertisingHandlers["create"] = async (req, res) => {
       `/ads/images/${fields.title.join("")}`,
       file,
       metadata as any,
-      (err, etag) => {
+      (err) => {
         if (err) {
           throw new Error(`${err}`);
         }
@@ -36,7 +36,7 @@ const createAdd: AdvertisingHandlers["create"] = async (req, res) => {
         description: fields.description.join(""),
         imageUrl: `https://${
           process.env.MINIO_ENDPOINT
-        }/origin/ads/images/${fields.title.join("")}`,
+        }/origin/ads/images/${fields.title.join("")}.jpeg`,
         linkTo: fields.linkTo.join(""),
         title: fields.title.join(""),
       },
