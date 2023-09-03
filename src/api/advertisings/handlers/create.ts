@@ -24,7 +24,7 @@ const createAdd: AdvertisingHandlers["create"] = async (req, res) => {
       `/ads/images/${fields.title.join("")}`,
       file,
       metadata as any,
-      (err) => {
+      (err, etag) => {
         if (err) {
           throw new Error(`${err}`);
         }
