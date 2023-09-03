@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx prisma generate && tsc",
+    "build": "npx prisma generate && npx tsc",
     "start": "node dist/src/index.js",
     "dev": "ts-node-dev --respawn --exit-child ./src/index.ts",
     "deploy": "npm run build && node ./dist/src/index.js",
